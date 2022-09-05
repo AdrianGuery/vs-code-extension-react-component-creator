@@ -5,7 +5,7 @@ function parseComponentName(componentName: string) {
   return { name: componentName, slug: componentName.toLowerCase() };
 }
 
-function generateContent(name: string, slug: string) {
+function generateJSXContent(name: string, slug: string) {
   const content = [
     `import React from "react";\n`,
 
@@ -28,4 +28,25 @@ function generateContent(name: string, slug: string) {
   return content.join("\n");
 }
 
-export { parseComponentName, generateContent };
+function generateTestContent(name: string) {
+  const content = [
+    `import * as React from "react";\n`,
+
+    `import { render, screen } from "test-utils";`,
+    `import userEvent from "@testing-library/user-event";\n`,
+    `import ${name} from "./${name}";\n`,
+
+    `test("counter increments and decrements when the buttons are clicked", async () => {`,
+    `   render(<${name} />);\n`,
+    `   const buttonChangeTitle = screen.getByRole("button", { name: /change title/i });`,
+    `   const title = screen.getByText(/TITLE/i);`,
+    `   expect(title).toBeInTheDocument();`,
+    `   userEvent.click(buttonChangeTitle);`,
+    `   expect(title).toHaveTextContent("TITLE 1");`,
+    `});`
+  ];
+
+  return content.join("\n");
+}
+
+export { parseComponentName, generateJSXContent, generateTestContent };
